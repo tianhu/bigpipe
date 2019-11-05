@@ -15,37 +15,37 @@
 7. `sudo vi tinc.conf`
 
 > Name = tiger  
-> AddressFamily = ipv4
-> Interface = tun0
+> AddressFamily = ipv4  
+> Interface = tun0  
 
 8. `sudo vi tinc-up`
 
-> #!/bin/sh
-> ip link set $INTERFACE up
-> ip addr add 192.168.60.1/24 dev $INTERFACE
-> ip route add 192.168.60.0/24 dev $INTERFACE
-> iptables -A POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0
+> #!/bin/sh  
+> ip link set $INTERFACE up  
+> ip addr add 192.168.60.1/24 dev $INTERFACE  
+> ip route add 192.168.60.0/24 dev $INTERFACE  
+> iptables -A POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0  
 
 9. `sudo chmod +x tinc-up`
 10. `sudo vi tinc-down`
 
-> #!/bin/sh
-> ip link set $INTERFACE down
-> iptables -D POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0
+> #!/bin/sh  
+> ip link set $INTERFACE down  
+> iptables -D POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0  
 
 11. `sudo chmod +x tinc-down`
 12. `cd hosts`
 13. `sudo vi tiger`
 
-> Address = <server-public-ip>
-> Port = 443
-> Subnet = 0.0.0.0/0
+> Address = <server-public-ip>  
+> Port = 443  
+> Subnet = 0.0.0.0/0  
 
 14. `sudo tincd -n tiger -K4096`
 
 15. `sudo vi /etc/tinc/nets.boot`
 
-> Append a new line: tiger
+> Append a new line: tiger  
 
 16. `sudo systemctl enable tinc@tiger`
 17. `sudo systemctl start tinc@tiger`
@@ -59,29 +59,29 @@
 4. `cd howard`
 5. `sudo vi tinc.conf`
 
-> Name = howard
-> AddressFamily = ipv4
-> Interface = tun0
-> ConnectTo = tiger
+> Name = howard  
+> AddressFamily = ipv4  
+> Interface = tun0  
+> ConnectTo = tiger  
 
 6. `sudo vi tinc-up`
 
-> #!/bin/sh
-> ip link set $INTERFACE up
-> ip addr add 192.168.60.2/24 dev $INTERFACE
-> ip route add 192.168.60.0/24 dev $INTERFACE
+> #!/bin/sh  
+> ip link set $INTERFACE up  
+> ip addr add 192.168.60.2/24 dev $INTERFACE  
+> ip route add 192.168.60.0/24 dev $INTERFACE  
 
 7. `sudo chmod +x tinc-up`
 8. `sudo vi tinc-down`
 
-> #!/bin/sh
-> ip link set $INTERFACE down
+> #!/bin/sh  
+> ip link set $INTERFACE down  
 
 9. `sudo chmod +x tinc-down`
 10. `cd hosts`
 11. `sudo vi howard`
 
-> Subnet = 192.168.60.2/32
+> Subnet = 192.168.60.2/32  
 
 12. `sudo tincd -n howard -K4096`
 
