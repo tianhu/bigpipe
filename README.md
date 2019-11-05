@@ -1,3 +1,5 @@
+# WIP
+  
 ## Server
 
 1. `sudo apt install tinc`
@@ -23,7 +25,7 @@
 > #!/bin/sh  
 > ip link set $INTERFACE up  
 > ip addr add 192.168.60.1/24 dev $INTERFACE  
-> ip route add 192.168.60.0/24 dev $INTERFACE  
+> ip route add 192.168.60.254/24 dev $INTERFACE  
 > iptables -A POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0  
 
 9. `sudo chmod +x tinc-up`
@@ -69,7 +71,7 @@
 > #!/bin/sh  
 > ip link set $INTERFACE up  
 > ip addr add 192.168.60.2/24 dev $INTERFACE  
-> ip route add 192.168.60.0/24 dev $INTERFACE  
+> ip route add 192.168.60.254/24 dev $INTERFACE  
 
 7. `sudo chmod +x tinc-up`
 8. `sudo vi tinc-down`
