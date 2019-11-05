@@ -25,7 +25,6 @@
 > #!/bin/sh  
 > ip link set $INTERFACE up  
 > ip addr add 192.168.60.1/24 dev $INTERFACE  
-> ip route add 192.168.60.254/24 dev $INTERFACE  
 > iptables -A POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0  
 
 9. `sudo chmod +x tinc-up`
@@ -72,12 +71,30 @@
 > ip link set $INTERFACE up  
 > ip addr add 192.168.60.2/24 dev $INTERFACE  
 > ip route add 192.168.60.254/24 dev $INTERFACE  
+>   
+> VPN_GATEWAY=192.168.60.1  
+> REMOTEADDRESS=40.76.63.100  
+> ORIGINAL_GATEWAY=`ip route show | grep ^default | cut -d ' ' -f 2-5`  
+>   
+> ip route add $REMOTEADDRESS $ORIGINAL_GATEWAY  
+> ip route add $VPN_GATEWAY dev $INTERFACE  
+> ip route add 0.0.0.0/1 via $VPN_GATEWAY dev $INTERFACE  
+> ip route add 128.0.0.0/1 via $VPN_GATEWAY dev $INTERFACE  
 
 7. `sudo chmod +x tinc-up`
 8. `sudo vi tinc-down`
 
 > #!/bin/sh  
 > ip link set $INTERFACE down  
+>   
+> VPN_GATEWAY=192.168.60.1  
+> ORIGINAL_GATEWAY=`ip route show | grep ^default | cut -d ' ' -f 2-5`  
+> REMOTEADDRESS=40.76.63.100  
+>   
+> ip route del $REMOTEADDRESS $ORIGINAL_GATEWAY  
+> ip route del $VPN_GATEWAY dev $INTERFACE  
+> ip route del 0.0.0.0/1 dev $INTERFACE  
+> ip route del 128.0.0.0/1 dev $INTERFACE  
 
 9. `sudo chmod +x tinc-down`
 10. `cd hosts`
