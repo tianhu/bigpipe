@@ -75,7 +75,7 @@
 > ip route add 192.168.60.254/24 dev $INTERFACE  
 >   
 > VPN_GATEWAY=192.168.60.1  
-> REMOTEADDRESS=40.76.63.100  
+> REMOTEADDRESS=<server-public-ip> 
 > ORIGINAL_GATEWAY=`ip route show | grep ^default | cut -d ' ' -f 2-5`  
 >   
 > ip route add $REMOTEADDRESS $ORIGINAL_GATEWAY  
@@ -91,7 +91,7 @@
 >   
 > VPN_GATEWAY=192.168.60.1  
 > ORIGINAL_GATEWAY=`ip route show | grep ^default | cut -d ' ' -f 2-5`  
-> REMOTEADDRESS=40.76.63.100  
+> REMOTEADDRESS=<server-public-ip>  
 >   
 > ip route del $REMOTEADDRESS $ORIGINAL_GATEWAY  
 > ip route del $VPN_GATEWAY dev $INTERFACE  
