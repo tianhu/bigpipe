@@ -1,4 +1,6 @@
-# WIP
+![picture](tinc-icon.png)
+
+# Work in process...
   
 ## Server
 
@@ -109,4 +111,5 @@
 
 
 ## exchange host files
-Copy howard to tiger machine, copy tiger to howard machine.
+Copy howard to tiger machine, copy tiger to howard machine.  
+Set up DNS on client machine.
