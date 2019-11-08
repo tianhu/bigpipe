@@ -134,6 +134,8 @@ Write below content.
 
 14. Launch tinc on demand with command `sudo tincd -n howard -D`
 
+> Use command line `sudo pkill tincd` to stop.
+
 15. Customize DNS
 
 > You may want to specify an external DNS server to resolve some blocked domain names in some countries.  
