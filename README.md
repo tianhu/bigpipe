@@ -1,14 +1,18 @@
 ![picture](tinc-icon.png)
 
-# Work in process...
+# Step by step guide to setup tinc VPN
+
+Tinc is a peer to peer VPN software to create a mesh network. (https://www.tinc-vpn.org)  
   
-## Server
+In this gudie, I will show you how to setup an Azure VPS act as a server named tiger and a local client named howard. 
+
+## Server installation
 
 1. `sudo apt install tinc`
 
 2. `sudo vi /etc/sysctl.conf`
 
-> uncommend: net.ipv4.ip_forward=1
+> uncommend: `net.ipv4.ip_forward=1`
 
 3. `sudo sysctl -p`
 
@@ -18,11 +22,15 @@
 6. `cd tiger`
 7. `sudo vi tinc.conf`
 
+Write below content.  
+
 > Name = tiger  
 > AddressFamily = ipv4  
 > Interface = tun0  
 
 8. `sudo vi tinc-up`
+
+Write below content.  
 
 > #!/bin/sh  
 > ip link set $INTERFACE up  
@@ -32,6 +40,8 @@
 9. `sudo chmod +x tinc-up`
 10. `sudo vi tinc-down`
 
+Write below content.  
+
 > #!/bin/sh  
 > ip link set $INTERFACE down  
 > iptables -D POSTROUTING -t nat -s 192.168.60.0/24 -j MASQUERADE -o eth0  
@@ -40,21 +50,24 @@
 12. `cd hosts`
 13. `sudo vi tiger`
 
+Write below content. Replace `<server-public-ip>` with the server's public IP address.  
+
 > Address = `<server-public-ip>`  
 > Port = 443  
 > Subnet = 0.0.0.0/0  
 
 14. `sudo tincd -n tiger -K4096`
-
 15. `sudo vi /etc/tinc/nets.boot`
 
-> Append a new line: tiger  
+Append a new line.  
+
+> tiger  
 
 16. `sudo systemctl enable tinc@tiger`
 17. `sudo systemctl start tinc@tiger`
 
 
-## Client
+## Client installation
 
 1. `sudo apt install tinc`
 2. `cd /etc/tinc`
@@ -62,12 +75,16 @@
 4. `cd howard`
 5. `sudo vi tinc.conf`
 
+Write below content.  
+
 > Name = howard  
 > AddressFamily = ipv4  
 > Interface = tun0  
 > ConnectTo = tiger  
 
 6. `sudo vi tinc-up`
+
+Write below content. Replace `<server-public-ip>` with the server's public IP address.  
 
 > #!/bin/sh  
 > ip link set $INTERFACE up  
@@ -86,6 +103,8 @@
 7. `sudo chmod +x tinc-up`
 8. `sudo vi tinc-down`
 
+Write below content. Replace `<server-public-ip>` with the server's public IP address.  
+
 > #!/bin/sh  
 > ip link set $INTERFACE down  
 >   
@@ -102,14 +121,33 @@
 10. `cd hosts`
 11. `sudo vi howard`
 
+Write below content.  
+
 > Subnet = 192.168.60.2/32  
 
 12. `sudo tincd -n howard -K4096`
 
+13. Exchange host files.  
 
-13. `sudo tincd -n howard -D`
+> Copy the file `tiger` from the folder `/etc/tinc/tiger/hosts` on the server to the folder `/etc/tinc/howard/hosts` on the client.  
+> Copy the file `howard` from the folder `/etc/tinc/howard/hosts` on the client to the folder `/etc/tinc/tiger/hosts` on the server.  
 
+14. Launch tinc on demand with command `sudo tincd -n howard -D`
 
-## exchange host files
-Copy howard to tiger machine, copy tiger to howard machine.  
-Set up DNS on client machine.
+15. Customize DNS
+
+> You may want to specify an external DNS server to resolve some blocked domain names in some countries.  
+>   
+> ```
+> sudo vi /etc/systemd/resolved.conf  
+> ```
+>  
+> Set below settings.  
+>   
+>> [Resolve]  
+>> DNS=8.8.8.8 8.8.4.4  
+>> Domains=~.  
+>   
+> ```
+> sudo systemctl restart systemd-resolved  
+> ```
